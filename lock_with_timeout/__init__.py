@@ -14,11 +14,17 @@ class Lock(object):
     Thread-safe lock mechanism with timeout support.
     """
 
-    def __init__(self):
+    def __init__(self, timeout=None):
         self._queue = Queue(maxsize=1)
         self._owner = None
+        if timeout:
+            self._timeout = timeout
+        else:
+            self._timeout = 0
 
-    def acquire(self, timeout=0):
+    def acquire(self, timeout=None):
+        if timeout:
+            timeout = self._timeout
         th = current_thread()
         try:
             self._queue.put(
@@ -47,7 +53,7 @@ class Lock(object):
         if 'timeout' in kwargs:
             self.acquire(timeout=kwargs['timeout'])
         else:
-            self.acquire()
+            self.acquire(self._timeout)
     
     def __exit__(self, *args, **kwargs):
         self.release()
