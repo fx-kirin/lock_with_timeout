@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="lock_with_timeout",
-    version="0.1.0",
+    version="0.1.1",
     url="https://github.com/fx-kirin/lock_with_timeout",
 
     author="fx-kirin",

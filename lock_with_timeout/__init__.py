@@ -7,7 +7,7 @@ Thread-safe lock mechanism with timeout support module.
 """
 
 from threading import ThreadError, current_thread
-from Queue import Queue, Full, Empty
+from queue import Queue, Full, Empty
 
 class Lock(object):
     """
