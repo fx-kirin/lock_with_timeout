@@ -6,8 +6,13 @@ __all__ = ['Lock']
 Thread-safe lock mechanism with timeout support module.
 """
 
+from queue import Empty, Full, Queue
 from threading import ThreadError, current_thread
-from queue import Queue, Full, Empty
+
+import kanilog
+
+logger = kanilog.get_module_logger(__file__, 0)
+
 
 class Lock(object):
     """
@@ -27,10 +32,12 @@ class Lock(object):
             timeout = self._timeout
         th = current_thread()
         try:
+            logger.debug('Acquiring Lock')
             self._queue.put(
                 th, block=(timeout != 0),
                 timeout=(None if timeout < 0 else timeout)
             )
+            logger.debug('Acquired Lock')
         except Full:
             raise ThreadError('Lock Timed Out')
 
@@ -44,16 +51,17 @@ class Lock(object):
 
         self._owner = None
         try:
+            logger.debug('Releasing Lock')
             self._queue.get(False)
             return True
         except Empty:
             raise ThreadError('This lock was released already.')
-    
-    def __enter__(self,*args, **kwargs):
+
+    def __enter__(self, *args, **kwargs):
         if 'timeout' in kwargs:
             self.acquire(timeout=kwargs['timeout'])
         else:
             self.acquire(self._timeout)
-    
+
     def __exit__(self, *args, **kwargs):
         self.release()
